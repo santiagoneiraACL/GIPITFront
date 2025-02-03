@@ -82,7 +82,7 @@ export default function UserDetailsPage() {
           <p><strong>Compañía:</strong> {userData.companies?.[0]?.companyName || "Sin compañía"}</p>
         )}
         
-        {/* Mostrar jefatura solo si el rol es Cliente (6) */}
+        {/* Mostrar jefatura si el rol es Cliente (6) */}
         {userData.roles?.nombre === "client" && (
           <>
             <p><strong>Compañía:</strong> {userData.managements?.[0]?.companyName || "Sin compañía"}</p> 
