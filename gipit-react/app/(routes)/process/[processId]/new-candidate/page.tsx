@@ -7,6 +7,7 @@ import { handleCreateCandidate } from "@/app/actions/handleCreateCandidate";
 import LoaderNewCandidate from "@/components/atoms/LoaderNewCandidate";
 import { candidateSchema } from "@/app/lib/validationSchemas";
 import { useAppContext } from "../../../../../contexts/AppContext";
+import { toast } from "react-toastify";
 
 
 
@@ -59,16 +60,35 @@ function Page({ params }: { params: { processId: string } }) {
 		],
 	];
 
-  const handleSubmit = async (formData: FormData) => {
-    setIsLoading(true);
-    const result = await handleCreateCandidate(formData, routeToRedirect);
-		if (result.statusCode === 200) {
-			await refreshCandidates(Number(processId), "entrevistas"); // Actualiza los datos
-			router.push(result.route); // Redirige
+	const handleSubmit = async (formData: FormData): Promise<{ message: string; route: string; statusCode: number }> => {
+		setIsLoading(true);
+		try {
+			const result = await handleCreateCandidate(formData, routeToRedirect);
+	
+			// Verificar si ocurrió un error
+			if (result.statusCode !== 200) {
+				console.error(result.message);
+				toast.error(result.message);
+				return result; // Asegurar que se retorna el resultado aunque sea un error
+			}
+			
+	
+			// Redirigir a la ruta indicada en caso de éxito
+			await refreshCandidates(Number(processId), "entrevistas");
+			router.push(result.route);
+			return result; // Retorna el resultado exitoso
+		} catch (error) {
+			console.error("Error en la creación del candidato:", error);
+			toast.error("Ocurrió un error inesperado.");
+			return {
+				message: "Error inesperado en la creación del candidato.",
+				route: routeToRedirect,
+				statusCode: 500,
+			}; // Retorna un objeto consistente en caso de error
+		} finally {
+			setIsLoading(false);
 		}
-		setIsLoading(false);
-    return result;
-  };
+	};
 
   return (
     <div>

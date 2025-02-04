@@ -26,6 +26,7 @@ interface CompatibilityResponse {
   preguntas_rrhh?: string[];
 }
 
+
 export const handleCreateCandidate = async (
   formData: FormData,
   actualRoute: string
@@ -114,9 +115,23 @@ export const handleCreateCandidate = async (
 
   // Esperar hasta que el estado no sea 'PENDING'
   let respuestaJob: DocumentResponse | null = documentResponse;
+
+  const MAX_WAIT_TIME_MS = 60000; // 1 minuto
+  const startTime = Date.now();
+
   while (respuestaJob?.status === "PENDING") {
+
+    if (Date.now() - startTime > MAX_WAIT_TIME_MS) {
+      return {
+        message: "Tenemos problemas leyendo el contenido, prueba en otro formato o con otro archivo.",
+        route: actualRoute,
+        statusCode: 408, // Código HTTP para Timeout
+      };
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Espera 5 segundos antes de verificar de nuevo
     respuestaJob = await checkJob(documentResponse?.id);
+    
     if (!respuestaJob) {
       console.error("No se pudo obtener una respuesta válida del trabajo.");
       return {
@@ -145,6 +160,13 @@ export const handleCreateCandidate = async (
   if (respuestaJob?.status === "SUCCESS") {
     // Comunicación para obtener la transcripción en texto
     const textoHTMLResult = await getText(respuestaJob?.id);
+    if (!textoHTMLResult?.text) {
+      return {
+        message: "No se pudo obtener el texto del CV.",
+        route: actualRoute,
+        statusCode: 500,
+      };
+    }
     if (
       typeof textoHTMLResult === "object" &&
       textoHTMLResult !== null &&
@@ -152,6 +174,7 @@ export const handleCreateCandidate = async (
     ) {
       resultadoTextoHTML = textoHTMLResult as { text: string };
     }
+
 
     //Comunicación con chatGPT para obtener respuesta de valor para RH
     if (resultadoTextoHTML?.text) {
@@ -265,16 +288,6 @@ export const handleCreateCandidate = async (
     };
   }
   formData.append("process_id", processId.toString());
-  // formData.append(
-  //   "technical_skills",
-  //   resultadoCompatibilidad?.evaluacion?.coincidencias?.habilidades || ""
-  // );
-  // formData.append(
-  //   "client_comments",
-  //   Array.isArray(resultadoCompatibilidad?.evaluacion?.faltas)
-  //     ? resultadoCompatibilidad.evaluacion.faltas.join(", ")
-  //     : ""
-  // );
   formData.append(
     "total_experience",
     totalExperiencia.toString()
@@ -284,11 +297,6 @@ export const handleCreateCandidate = async (
     (resultadoCompatibilidad?.evaluacion?.puntuacion_general || 0).toString()
   );
   formData.append("interview_questions", interviewQuestions);
-  // const softSkills =
-  //   resultadoCompatibilidad?.evaluacion?.coincidencias?.soft_skills ?? "";
-  // formData.append("soft_skills", softSkills);
-
-
 
   // Agrega candidatos a la base de datos
   const createResponse = await createCandidateAction(formData, processId);

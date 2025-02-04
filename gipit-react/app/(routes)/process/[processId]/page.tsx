@@ -11,12 +11,17 @@ export default function Page() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Solo redirigir si no estamos ya en una ruta de candidato
-    if (candidatesTabs.length > 0 && candidatesTabs[0].id && !pathname.includes('/candidate/')) {
+    // Verificar si hay candidatos y si no estamos en la ruta de edición del nuevo candidato
+    if (
+      candidatesTabs.length > 0 &&
+      candidatesTabs[0].id &&
+      !pathname.includes(`/edit-candidate`) &&
+      !pathname.includes(`/${candidatesTabs[0].id}`)
+    ) {
       const timeoutId = setTimeout(() => {
-        router.push(`${pathname}/${candidatesTabs[0].id}`);
+        router.push(`${pathname}/${candidatesTabs[0].id}/edit-candidate`);
       }, 100);
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [candidatesTabs, pathname, router]);
