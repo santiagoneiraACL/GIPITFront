@@ -7,6 +7,7 @@ interface CandidateResponse {
   end: string | null;
   rate: number;
   status: string;
+  management: number;
 }
 
 export const fetchCandidates = async ({ 
@@ -71,6 +72,7 @@ export const fetchCandidates = async ({
         end: formatDate(candidate.end),
         rate: candidate.rate,
         status: candidate.status,
+        management: candidate.management ?? "No Hay Jefatura"
       };
     });
 

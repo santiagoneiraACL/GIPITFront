@@ -22,6 +22,7 @@ type Proceso = {
   stage: string;
   company: string;
   isInternal: boolean;
+  management: string
 };
 
 interface Column<T> {
@@ -61,13 +62,14 @@ export default async function Page(props: {
 
   const data: ResponseData<Proceso> = {
     columns: [
-      { name: "Nombre", key: "name", width: 2 },
+      { name: "Nombre", key: "name", width: 2.0 },
+      { name: "Cliente", key: "company", width: 1.5 },
+      { name: "Jefatura", key: "management", width: 1.5 },
+      { name: "Inicio", key: "startAt", width: 1.2 },
+      { name: "Cierre", key: "endAt", width: 1.2 },
       { name: "Etapa", key: "stage", width: 1.2 },
-      { name: "Inicio", key: "startAt", width: 1 },
-      { name: "Cierre", key: "endAt", width: 1 },
       { name: "Pre Filtrados", key: "preFiltered", width: 1 },
       { name: "Candidatos", key: "candidates", width: 1 },
-      { name: "Cliente", key: "company", width: 0.9 },
       { name: "Estado", key: "status", width: 0.6 },
     ],
     total: process.total,

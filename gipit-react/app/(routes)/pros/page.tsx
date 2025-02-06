@@ -19,6 +19,7 @@ interface CandidateDetails {
   end?: string;
   rate?: string;
   status?: string | React.ReactNode;
+  management: string;
 }
 
 interface Column<T> {
@@ -91,8 +92,8 @@ export default async function CandidatesPage({
 
   const columns: Column<CandidateDetails>[] = [
     { name: "Nombre", key: "name", width: 1.5 },
-    { name: "Jefatura", key: "role", width: 1.5 },
-    { name: "Compañia", key: "company", width: 1.5 },
+    { name: "Cliente", key: "company", width: 1.5 },
+    { name: "Jefatura", key: "management", width: 1.5 },
     { name: "Fecha Inicio", key: "start", width: 1.2 },
     { name: "Fecha Término", key: "end", width: 1.2 },
     { name: "Valor HH", key: "rate", width: 1.5 },
