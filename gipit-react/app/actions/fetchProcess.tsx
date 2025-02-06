@@ -14,6 +14,7 @@ type Proceso = {
   jobOffer: string | null;
   stage: string;
   company: string;
+  management?: string;
 };
 
 export const fetchProcess = async (page: number, query?: string, status?: string, companyId?: number, session?: Session) => {
@@ -81,6 +82,7 @@ export const fetchProcess = async (page: number, query?: string, status?: string
         status: process.status ? process.status.charAt(0).toUpperCase() + process.status.slice(1) : "Desconocido",
         stage: process.stage ?? "Entrevistas",
         company: process.company ?? "No hay empresa",
+        management: process.management ?? "No hay jefatura",
       }}),
     };
   } catch (error) {
