@@ -4,7 +4,13 @@ import "./searchBar.css";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchListCompanies } from '@/app/actions/fetchCompanies';
+import { fetchManagements } from '@/app/actions/fetchManagements';
 
+
+interface Management {
+  id: number;
+  name: string;
+}
 
 interface Client {
   name: string;
@@ -25,6 +31,7 @@ interface SearchBarProps {
   defaultYear?: string;
   noSearch?: boolean;
   companyFilter?: boolean;
+  managementFilter?: boolean;
   roleOptions?: StatusOption[];
   defaultRole?: string;
   onSearch?: (term: string) => void;
@@ -43,7 +50,9 @@ export default function SearchBar({
   onSearch
 }: SearchBarProps) {
   const [clients, setClients] = useState<Client[]>([]);
+  const [managements, setManagements] = useState<Management[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
+  const [selectedManagement, setSelectedManagement] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -64,6 +73,19 @@ export default function SearchBar({
 
     loadClients();
   }, []);
+
+
+  useEffect(() => {
+    const loadManagements = async () => {
+      if (selectedCompany) {
+        const managementList = await fetchManagements(selectedCompany);
+        setManagements(managementList);
+      } else {
+        setManagements([]);
+      }
+    };
+    loadManagements();
+  }, [selectedCompany]);
 
 
   const handleStatusChange = (status: string) => {
@@ -108,6 +130,25 @@ export default function SearchBar({
     router.replace(`${pathname}?${params.toString()}`);
   };
 
+
+  const handleManagementChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const managementId = event.target.value;
+  
+    // Actualizar el estado
+    setSelectedManagement(managementId ? parseInt(managementId) : null);
+  
+    // Actualizar los parámetros de búsqueda
+    const params = new URLSearchParams(searchParams);
+    if (managementId) {
+      params.set("managementId", managementId);
+      console.log("Actualizando URL con parámetros:", params.toString());
+    } else {
+      params.delete("managementId");
+    }
+  
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   const handleYearChange = (year: string) => {
     const params = new URLSearchParams(searchParams);
     if (year) {
@@ -127,6 +168,7 @@ export default function SearchBar({
     }
     router.replace(`${pathname}?${params.toString()}`);
   };
+
 
   return (
     <div className="search-and-filter-container">
@@ -167,6 +209,19 @@ export default function SearchBar({
           ))}
         </select>
         )}
+
+
+      {managements.length > 0 && (
+              <select value={selectedManagement || ""} onChange={handleManagementChange} className="status-select">
+                <option value="">Todas las jefaturas</option>
+                {managements.map((management) => (
+                  <option key={management.id} value={management.id}>
+                    {management.name}
+                  </option>
+                ))}
+              </select>
+        )}
+
 
         {yearOptions && (
           <select

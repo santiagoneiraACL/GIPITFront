@@ -17,7 +17,7 @@ type Proceso = {
   management?: string;
 };
 
-export const fetchProcess = async (page: number, query?: string, status?: string, companyId?: number, session?: Session) => {
+export const fetchProcess = async (page: number, query?: string, status?: string, companyId?: number, managementId?: number, session?: Session) => {
   try {
     
     if (page < 1) {
@@ -36,6 +36,9 @@ export const fetchProcess = async (page: number, query?: string, status?: string
     }
     if (companyId) {
       url.searchParams.set("companyId", companyId.toString());
+    }
+    if (managementId) {
+      url.searchParams.set("managementId", managementId.toString());
     }
     if (session?.user?.role) {
       url.searchParams.set("userRole", session.user.role);

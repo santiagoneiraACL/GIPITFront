@@ -49,13 +49,14 @@ export default async function CandidatesPage({
     page?: string;
     status?: string;
     companyId?: string;
+    managementId?: string;
   };
 }) {
   // Obtener la sesión del servidor
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role;
   const companyId = searchParams?.companyId ? parseInt(searchParams.companyId) : undefined;
-
+  const managementId = searchParams?.managementId ? parseInt(searchParams.managementId) : undefined;
   const page = searchParams?.page ? parseInt(searchParams.page) : 1;
   const query = searchParams?.query?.toLowerCase() || "";
   const status = searchParams?.status || "";
@@ -66,7 +67,8 @@ export default async function CandidatesPage({
     query, 
     status,
     userRole,
-    companyId
+    companyId,
+    managementId
   });
 
   if (!response || !response.batch) {

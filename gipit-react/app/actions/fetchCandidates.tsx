@@ -15,13 +15,15 @@ export const fetchCandidates = async ({
   query, 
   status,
   userRole,
-  companyId
+  companyId,
+  managementId
 }: { 
   page: number; 
   query?: string; 
   status?: string;
   userRole?: string;
   companyId?: number;
+  managementId?: number;
 }) => {
   try {
     const params = new URLSearchParams();
@@ -30,6 +32,7 @@ export const fetchCandidates = async ({
     if (status) params.append('status', status);
     if (userRole) params.append('userRole', userRole);
     if (companyId) params.append('companyId', companyId.toString());
+    if (managementId) params.append('managementId', managementId.toString());
 
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/candidate_pros_management?${params.toString()}`;
     

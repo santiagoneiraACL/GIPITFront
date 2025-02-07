@@ -43,6 +43,7 @@ export default async function Page(props: {
     page?: string;
     status?: string
     companyId?: number;
+    managementId?: number;
   }>;
 }) {
   const searchParams = await props.searchParams;
@@ -50,6 +51,7 @@ export default async function Page(props: {
   const query = searchParams?.query || ""; 
   const status = searchParams?.status || "";
   const companyId = searchParams?.companyId || "";
+  const managementId = searchParams?.managementId || "";
   const session = await getServerSession(authOptions);
   if (!session) throw new Error('No se pudo obtener la sesión del servidor');
 
@@ -58,7 +60,7 @@ export default async function Page(props: {
     showCompanyFilter = false;
   }
 
-  const process = await fetchProcess(page, query, status, Number(companyId), session);
+  const process = await fetchProcess(page, query, status, Number(companyId), Number(managementId), session);
 
   const data: ResponseData<Proceso> = {
     columns: [
