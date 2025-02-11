@@ -15,6 +15,7 @@ interface User {
     position: string;
     roleName: string;
     companyName: string;
+    managementName: string
 }
 
 interface Role {
@@ -31,11 +32,12 @@ function AdminPage() {
     const query = searchParams.get('query') || '';
     const role = searchParams.get('role') || '';
     const companyId = searchParams.get('companyId') || '';
+    const managementId = searchParams.get('managementId') || '';  // Nuevo filtro
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const userData = await fetchUsers(page, query, role, companyId);
+                const userData = await fetchUsers(page, query, role, companyId, managementId);
                 setUsers(userData.batch);
                 setTotalUsers(userData.total);
                 const roleData = await fetchRoles();
@@ -63,7 +65,8 @@ function AdminPage() {
         { name: "Email", key: "email", width: 2 },
         { name: "Cargo", key: "position", width: 1.5 },
         { name: "Rol", key: "roleName", width: 1.5 },
-        { name: "Compañía", key: "companyName", width: 1.5 },
+        { name: "Cliente", key: "companyName", width: 1.5 },
+        { name: "Jefatura", key: "managementName", width: 1.5 }
     ];
 
     const roleOptions = [
