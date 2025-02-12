@@ -39,7 +39,7 @@ export async function handleCloseProcess(
 
     return {
       message: result.message || "Proceso cerrado exitosamente y candidatos convertidos a profesionales",
-      route: result.route || "/process",
+      route: actualRoute,
       statusCode: 200,
     };
   } catch (error) {
