@@ -15,6 +15,7 @@ function FormRow({ row }: { row: FormInputProps[] }) {
 }
 
 function FormItem({ field }: { field: FormInputProps }) {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const evaluateInputRange = (ref: HTMLInputElement) => {
@@ -57,6 +58,7 @@ function FormItem({ field }: { field: FormInputProps }) {
           href={field.href ? field.href : "/"}
           key={field.label}
           className="button secondary"
+          onClick={() => {router.back()}} // Redirige a la página anterior
         >
           {field.value}
         </Link>

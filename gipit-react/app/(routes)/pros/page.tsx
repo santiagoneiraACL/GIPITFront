@@ -60,6 +60,12 @@ export default async function CandidatesPage({
   const page = searchParams?.page ? parseInt(searchParams.page) : 1;
   const query = searchParams?.query?.toLowerCase() || "";
   const status = searchParams?.status || "";
+  if (!session) throw new Error('No se pudo obtener la sesión del servidor');
+
+  let showCompanyFilter = true;
+  if (session.user.role === 'client' || session.user.role === 'Cliente-Gerente') {
+    showCompanyFilter = false;
+  }
 
   // Fetch de candidatos
   const response = await fetchCandidates({ 
@@ -123,7 +129,7 @@ export default async function CandidatesPage({
       <div className="candidates-page-header">
         <SearchBar
           statusOptions={statusOptions}
-          companyFilter={true}
+          companyFilter={showCompanyFilter}
           buttonLink="/pros/new-profesional"
           buttonText="Nuevo Profesional"
         />

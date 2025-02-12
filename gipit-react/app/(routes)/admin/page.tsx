@@ -34,6 +34,7 @@ function AdminPage() {
     const companyId = searchParams.get('companyId') || '';
     const managementId = searchParams.get('managementId') || '';  // Nuevo filtro
 
+
     useEffect(() => {
         const loadData = async () => {
             try {
