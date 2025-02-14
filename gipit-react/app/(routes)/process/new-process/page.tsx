@@ -120,21 +120,6 @@ const Page = () => {
     formData: FormData
   ): Promise<{ message: string; route: string; statusCode: number }> => {
     try {
-      // const formObj = Object.fromEntries(formData.entries());
-
-      // const parsedData = processSchema.safeParse(formObj);
-
-      // if (!parsedData.success) {
-      //   parsedData.error.errors.forEach((error) => {
-      //     toast.error(error.message);
-      //   });
-      //   return {
-      //     message: "validación fallida",
-      //     route: "/process/new",
-      //     statusCode: 500,
-      //   };
-      // }
-
       const result = await handleCreateProcess(formData);
 
       if (result.message.startsWith("Proceso creado exitosamente")) {
