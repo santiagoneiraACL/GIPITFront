@@ -251,6 +251,10 @@ export default async function Page(props: {
             <p>{professionalDetails?.candidates.email || "(correo@ejemplo.com)"}</p>
             <p>{professionalDetails?.position || "Posición no disponible"}</p>
           </div>
+
+          <div className="pro-buttons-container">
+            <Button text="Editar Profesional" href={`/pros/${proId}/edit-profesional`} type="primary" />
+          </div>
         </div>
         <p className="section-title text-14">Evaluación profesional</p>
         <div className="pro-rates-dashboard">

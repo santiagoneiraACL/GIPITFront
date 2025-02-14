@@ -171,6 +171,13 @@ export interface ProfessionalDetails {
   management_id: number;
   status: string;
   start_date: string;
-  candidateName?: string; // Asegúrate de incluir esta propiedad si la usas
+  rate: string;
+  candidates: {
+    name: string,
+    email: string,
+    phone: string,
+    address: string
+  } // Asegúrate de incluir esta propiedad si la usas
+  position?: string;
   // ... otras propiedades que necesites ...
 }

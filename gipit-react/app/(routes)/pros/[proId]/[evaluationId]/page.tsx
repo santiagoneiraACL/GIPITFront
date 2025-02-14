@@ -46,7 +46,7 @@ function Page({ params }: { params: { proId: string; evaluationId: string } }) {
     fetchData();
   }, [evaluationId, proId]);
 
-  const candidateName = professionalDetails?.candidateName || "Nombre no disponible";
+  const candidateName = professionalDetails?.candidates.name || "Nombre no disponible";
 
   const fields: FormInputsRow = [
     {

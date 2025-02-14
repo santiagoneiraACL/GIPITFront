@@ -11,6 +11,7 @@ import {
 import DataGrid from "@/components/molecules/DataGrid"; // Tabla de datos para evaluaciones
 import { fetchProfessionalDetails } from "@/app/actions/fetchProfessionalDetails"; // Acción para obtener detalles profesionales
 
+
 // Definición de la interfaz CandidateDetails
 interface CandidateDetails {
   id: number;
@@ -124,6 +125,7 @@ export default async function Page(props: {
     </div>;
   }
 
+
   // Obtenemos los datos de evaluación y los ordenamos por fecha
   const evaluationData = [...professionalDetails.post_sales_activities].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -223,6 +225,13 @@ export default async function Page(props: {
             <h4>{professionalDetails?.candidates.name || "Nombre no disponible"}</h4>
             <p>{professionalDetails?.candidates.email || "(correo@ejemplo.com)"}</p>
             <p>{professionalDetails?.position || "Posición no disponible"}</p>
+
+            {/* Editar Profesional */}
+            <div className="pro-buttons-container">
+            <Button text="Editar Profesional" href={`/pros/${proId}/edit-profesional`} type="primary" />
+            </div>
+
+
           </div>
         </div>
         <p className="section-title text-14">Evaluación profesional</p>
