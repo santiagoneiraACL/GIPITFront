@@ -11,8 +11,8 @@ import { fetchProcessDetails } from "@/app/actions/fetchProcessDetails";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Loader from "@/components/atoms/Loader";
-import './filter-pills.css';
-import { useRouter } from "next/navigation";
+import "./filter-pills.css";
+import { usePathname, useRouter } from "next/navigation";
 import { useAppContext } from "../../../../contexts/AppContext";
 
 // Define the types for Proceso and Candidate
@@ -39,7 +39,6 @@ type Candidate = {
   stage?: string;
 };
 
-
 type CandidateTab = {
   id: number | string;
   name: string;
@@ -57,21 +56,28 @@ export default function Layout({
   children,
   params,
 }: Readonly<{ children: React.ReactNode; params: { processId: string } }>) {
-
   const { data: session } = useSession();
   const { processId } = params;
   const router = useRouter();
+  const actualRoute = usePathname();
 
   const [proceso, setProceso] = useState<Proceso | null>(null);
-  const { candidatesTabs, updateCandidatesTabs, refreshCandidates, resetCandidates } = useAppContext(); // Usar contexto
+  const {
+    candidatesTabs,
+    updateCandidatesTabs,
+    refreshCandidates,
+    resetCandidates,
+  } = useAppContext(); // Usar contexto
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedStage, setSelectedStage] = useState<string>("entrevistas");
-  const [filteredCandidates, setFilteredCandidates] = useState<CandidateTab[]>([]);
+  const [filteredCandidates, setFilteredCandidates] = useState<CandidateTab[]>(
+    []
+  );
 
   useEffect(() => {
     if (processId) {
-    // Limpiar y refrescar candidatos
+      // Limpiar y refrescar candidatos
       resetCandidates(); // Resetea los candidatos previos
       refreshCandidates(Number(processId), selectedStage); // Carga los nuevos candidatos
 
@@ -86,7 +92,10 @@ export default function Layout({
             console.log("Proceso Data ---->", procesoData);
 
             setProceso(procesoData);
-            updateCandidatesTabs(procesoData.candidates ?? [], Number(processId)); // Asigna directamente los candidatos del proceso
+            updateCandidatesTabs(
+              procesoData.candidates ?? [],
+              Number(processId)
+            ); // Asigna directamente los candidatos del proceso
           } else {
             setError("Proceso no encontrado");
           }
@@ -100,8 +109,6 @@ export default function Layout({
       fetchData();
     }
   }, [processId, selectedStage]);
-
-
 
   // Actualiza `filteredCandidates` cuando cambian los candidatos o la etapa seleccionada
   useEffect(() => {
@@ -117,16 +124,23 @@ export default function Layout({
   useEffect(() => {
     if (filteredCandidates.length > 0) {
       const firstCandidate = filteredCandidates[0].id;
-      if (typeof firstCandidate === "number") {
-        router.push(`/process/${processId}/${firstCandidate}`);
-      } else {
-        console.error("El ID del candidato no es un número:", firstCandidate);
+      const targetPath = `/process/${processId}/${firstCandidate}`; // Marcador para la ruta, si ya estamos aca que no haga nada
+      if (actualRoute !== targetPath) {
+        if (typeof firstCandidate === "number") {
+          router.push(`/process/${processId}/${firstCandidate}`);
+        } else {
+          console.error("El ID del candidato no es un número:", firstCandidate);
+        }
       }
     }
   }, [filteredCandidates]);
 
   if (loading) {
-    return <div><Loader /></div>;
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   }
 
   if (error) {
@@ -224,17 +238,18 @@ export default function Layout({
 
   console.log(description);
 
-  //ADMIN O KAM
-  const isInternal = ["admin", "kam"].some(palabra => session?.user?.role == palabra);
+  //IsInternal es verdadero si el rol es ADMIN O KAM
+  const isInternal = ["admin", "kam"].some(
+    (palabra) => session?.user?.role == palabra
+  );
+  console.log(isInternal);
 
   return (
     <div className="inner-page-container">
       {isInternal ? (
         <ProcessInternalHeading process={proceso} etapasToUse={etapasToUse} />
       ) : (
-        <ProcessHeading
-          process={proceso}
-        />
+        <ProcessHeading process={proceso} />
       )}
 
       {/* Filtros */}
