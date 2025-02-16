@@ -31,16 +31,17 @@ export const authOptions: AuthOptions = {
         );
         const userInfo = await response.json();
 
-        console.log('User role from DB:', userInfo.roles.nombre); // Para debug
+        console.log("User role from DB:", userInfo.roles.nombre); // Para debug
+        console.log("User name:", userInfo.name); // Para debug
 
         if (!userInfo || !userInfo.roles.nombre) {
           return false;
         }
 
-        if (!userInfo.is_active) {
-          console.error("El usuario está inactivo.");
-          return false;
-        }
+        // if (!userInfo.is_active) {
+        //   console.error("El usuario está inactivo.");
+        //   return false;
+        // }
 
         const managementResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/users/management/${userInfo.id}`
@@ -50,14 +51,16 @@ export const authOptions: AuthOptions = {
         user.id = userInfo.id;
         user.role = userInfo.roles.nombre;
         user.position = userInfo.position;
-        user.managements = managementInfo.map((um: { management: Management }) => ({
-          id: um.management.id,
-          name: um.management.name,
-          company: {
-            id: um.management.company.id,
-            name: um.management.company.name,
-          },
-        }));
+        user.managements = managementInfo.map(
+          (um: { management: Management }) => ({
+            id: um.management.id,
+            name: um.management.name,
+            company: {
+              id: um.management.company.id,
+              name: um.management.company.name,
+            },
+          })
+        );
 
         return true;
       } catch (error) {
@@ -67,11 +70,11 @@ export const authOptions: AuthOptions = {
     },
     async jwt({ token, user }) {
       if (user) {
-        console.log('User role in JWT:', user.role);
+        console.log("User role in JWT:", user.role);
         token.id = user.id;
         token.role = user.role;
-        token.position = user.position ;
-        token.managements = user.managements ;
+        token.position = user.position;
+        token.managements = user.managements;
       }
       return token;
     },
@@ -87,9 +90,9 @@ export const authOptions: AuthOptions = {
       } else {
         session.user.position = undefined;
       }
-    
+
       session.user.managements = (token.managements as Management[]) || [];
-    
+
       return session;
     },
     async redirect({ baseUrl }) {
